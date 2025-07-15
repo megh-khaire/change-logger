@@ -1,0 +1,67 @@
+[project]
+name = "changelog-generator"
+version = "0.1.0"
+description = "AI-powered CLI tool for generating changelogs from git repositories"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "Megh Khaire", email = "meghkhaire@gmail.com" }]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Environment :: Console",
+    "Topic :: Software Development :: Version Control :: Git",
+]
+dependencies = [
+    # Agent dependencies
+    "openai>=1.95.1",
+    "pyyaml>=6.0.0",
+    "pydantic>=2.0.0",
+    "python-dotenv>=1.1.1",
+
+    # CLI dependencies
+    "typer>=0.9.0",
+    "gitpython>=3.1.40",
+    "rich>=13.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=4.0.0",
+    "pytest-mock>=3.12.0",
+    "pytest-asyncio>=0.23.0",
+    "black>=23.0.0",
+    "flake8>=6.0.0",
+    "mypy>=1.0.0",
+]
+
+[project.scripts]
+changelog-gen = "change_logger_cli.main:app"
+change-logger = "change_logger_cli.main:app"
+
+[project.urls]
+Homepage = "https://github.com/megh-khaire/change-logger"
+Repository = "https://github.com/megh-khaire/change-logger"
+Issues = "https://github.com/megh-khaire/change-logger/issues"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = ["-v"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-dir]
+"" = "src"
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
