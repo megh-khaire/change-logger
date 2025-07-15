@@ -51,11 +51,19 @@ def generate_changelog(
 
 
 def generate_changelog_from_commits(
-    commits: List[Commit], template: str = DEFAULT_TEMPLATE
+    commits: List[Commit], template: str = DEFAULT_TEMPLATE, progress_callback=None
 ):
     enriched_commits = []
-    for commit in commits:
+    for i, commit in enumerate(commits):
+        if progress_callback:
+            progress_callback(i, len(commits), commit)
         enriched_commit = enrich_commit(commit)
         enriched_commits.append(enriched_commit)
+
+    if progress_callback:
+        progress_callback(
+            len(commits), len(commits), None, "Generating final changelog..."
+        )
+
     changelog = generate_changelog(enriched_commits, template)
     return changelog

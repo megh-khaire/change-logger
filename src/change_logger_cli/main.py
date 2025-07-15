@@ -3,13 +3,14 @@ from pathlib import Path
 from typing import Optional
 
 import typer
-from change_logger_cli.client import AgentClient
-from change_logger_cli.git import GitUtils
 from dotenv import load_dotenv
 from rich.console import Console
 from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.table import Table
+
+from change_logger_cli.client import AgentClient
+from change_logger_cli.git import GitUtils
 
 # Load environment variables
 load_dotenv()
@@ -128,9 +129,22 @@ def generate(
                 )
                 raise typer.Exit(1)
 
-        # Generate changelog
-        with console.status("[bold green]Generating changelog with AI..."):
-            changelog = agent_client.generate_changelog(git_commits, template)
+        # Generate changelog with progress tracking
+        console.print("\n[bold green]🤖 Generating changelog with AI...[/bold green]")
+
+        def progress_callback(
+            current: int, total: int, commit=None, message: str = None
+        ):
+            if message:
+                console.print(f"[blue]{message}[/blue]")
+            elif commit:
+                console.print(
+                    f"[cyan]Processing commit {current + 1}/{total}:[/cyan] [white]{commit.hash[:8]}[/white] - {commit.message.split(chr(10))[0][:60]}{'...' if len(commit.message.split(chr(10))[0]) > 60 else ''}"
+                )
+
+        changelog = agent_client.generate_changelog(
+            git_commits, template, progress_callback
+        )
 
         # Format and display changelog
         changelog_content = f"# {changelog.title}\n\n"

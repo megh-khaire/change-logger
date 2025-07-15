@@ -1,5 +1,5 @@
 import os
-from typing import List
+from typing import Callable, List, Optional
 
 from change_logger_agent.main import generate_changelog_from_commits
 from change_logger_agent.models import Changelog, Commit
@@ -16,7 +16,10 @@ class AgentClient:
             raise ValueError("OPENAI_API_KEY environment variable must be set")
 
     def generate_changelog(
-        self, git_commits: List[GitCommit], template: str = None
+        self,
+        git_commits: List[GitCommit],
+        template: str = None,
+        progress_callback: Optional[Callable] = None,
     ) -> Changelog:
         """Generate changelog from git commits using the agent."""
         # Convert GitCommit objects to agent Commit objects
@@ -29,8 +32,12 @@ class AgentClient:
 
         # Use the agent to generate changelog
         if template:
-            changelog = generate_changelog_from_commits(agent_commits, template)
+            changelog = generate_changelog_from_commits(
+                agent_commits, template, progress_callback
+            )
         else:
-            changelog = generate_changelog_from_commits(agent_commits)
+            changelog = generate_changelog_from_commits(
+                agent_commits, progress_callback=progress_callback
+            )
 
         return changelog
